@@ -64,6 +64,8 @@ A Home Assistant integration for Cardmarket. Monitor your Cardmarket account, or
 
 ## Sensors
 
+![Sensors](images/sensors.png)
+
 | Sensor | Description |
 |--------|-------------|
 | `sensor.cardmarket_account_balance` | Account balance in Euro |
