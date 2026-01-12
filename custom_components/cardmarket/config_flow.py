@@ -11,6 +11,7 @@ from homeassistant import config_entries
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers import config_validation as cv
 
 from .api import CardmarketScraper, CardmarketAuthError, CardmarketConnectionError
 from .const import (
@@ -279,7 +280,3 @@ class CardmarketOptionsFlowHandler(config_entries.OptionsFlow):
                 "count": str(len(current_tracked)),
             },
         )
-
-
-# Import cv for multi_select
-from homeassistant.helpers import config_validation as cv
