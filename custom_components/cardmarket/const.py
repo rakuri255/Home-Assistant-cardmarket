@@ -72,6 +72,51 @@ ATTR_PRICE_7_DAY = "price_7_day_avg"
 ATTR_PRICE_1_DAY = "price_1_day_avg"
 ATTR_AVAILABLE_ITEMS = "available_items"
 
+# Card filter options
+CONF_CARD_LANGUAGE = "language"
+CONF_CARD_CONDITION = "condition"
+CONF_CARD_FOIL = "foil"
+
+# Cardmarket language codes
+CARD_LANGUAGES = {
+    "": "Any",
+    "1": "English",
+    "2": "French",
+    "3": "German",
+    "4": "Spanish",
+    "5": "Italian",
+    "6": "Simplified Chinese",
+    "7": "Japanese",
+    "8": "Portuguese",
+    "9": "Russian",
+    "10": "Korean",
+    "11": "Traditional Chinese",
+}
+
+# Cardmarket condition codes (Mint to Poor)
+CARD_CONDITIONS = {
+    "": "Any",
+    "MT": "Mint",
+    "NM": "Near Mint",
+    "EX": "Excellent",
+    "GD": "Good",
+    "LP": "Light Played",
+    "PL": "Played",
+    "PO": "Poor",
+}
+
+# Foil options
+CARD_FOIL_OPTIONS = {
+    "": "Any",
+    "N": "No (Non-Foil)",
+    "Y": "Yes (Foil)",
+}
+
+# Attribute keys for filters
+ATTR_LANGUAGE = "language"
+ATTR_CONDITION = "condition"
+ATTR_FOIL = "foil"
+
 # Services
 SERVICE_SEARCH_CARD = "search_card"
 SERVICE_ADD_TRACKED_CARD = "add_tracked_card"

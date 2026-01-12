@@ -464,11 +464,20 @@ class CardmarketScraper:
             "price_from": price,
         }
 
-    async def get_card_prices(self, card_url: str) -> dict[str, Any]:
+    async def get_card_prices(
+        self, 
+        card_url: str,
+        language: str = "",
+        condition: str = "",
+        foil: str = "",
+    ) -> dict[str, Any]:
         """Get detailed price information for a specific card.
         
         Args:
             card_url: The full URL or path to the card product page
+            language: Language filter (1=English, 2=French, 3=German, etc.)
+            condition: Condition filter (MT, NM, EX, GD, LP, PL, PO)
+            foil: Foil filter (Y=Yes, N=No, empty=Any)
             
         Returns:
             Dictionary with price information
@@ -479,13 +488,29 @@ class CardmarketScraper:
         elif not card_url.startswith("http"):
             card_url = f"{BASE_URL}/{card_url}"
         
-        html = await self._get_page(card_url)
+        # Build filter URL for the offers page
+        # Cardmarket uses query parameters like: ?language=1&minCondition=NM&isFoil=Y
+        filter_params = []
+        if language:
+            filter_params.append(f"language={language}")
+        if condition:
+            filter_params.append(f"minCondition={condition}")
+        if foil:
+            filter_params.append(f"isFoil={foil}")
+        
+        filter_url = card_url
+        if filter_params:
+            separator = "&" if "?" in card_url else "?"
+            filter_url = f"{card_url}{separator}{'&'.join(filter_params)}"
+        
+        html = await self._get_page(filter_url)
         soup = BeautifulSoup(html, "html.parser")
         
         prices: dict[str, Any] = {
             "name": "",
             "set": "",
             "url": card_url,
+            "filter_url": filter_url if filter_params else None,
             "price_from": None,
             "price_trend": None,
             "price_30_day_avg": None,
@@ -568,24 +593,42 @@ class CardmarketScraper:
         
         return prices
 
-    async def get_tracked_card_prices(self, card_urls: list[str]) -> dict[str, dict[str, Any]]:
-        """Get prices for multiple tracked cards.
+    async def get_tracked_card_prices(
+        self, 
+        tracked_cards: list[dict[str, Any]]
+    ) -> dict[str, dict[str, Any]]:
+        """Get prices for multiple tracked cards with their filters.
         
         Args:
-            card_urls: List of card URLs to fetch prices for
+            tracked_cards: List of tracked card dictionaries with url and filter info
             
         Returns:
-            Dictionary mapping card URLs to their price data
+            Dictionary mapping card unique keys to their price data
         """
         await self._ensure_logged_in()
         
         results = {}
-        for url in card_urls:
+        for card in tracked_cards:
+            url = card.get("url", "")
+            unique_key = card.get("unique_key", url)
+            language = card.get("language", "")
+            condition = card.get("condition", "")
+            foil = card.get("foil", "")
+            
             try:
-                prices = await self.get_card_prices(url)
-                results[url] = prices
+                prices = await self.get_card_prices(
+                    url, 
+                    language=language,
+                    condition=condition,
+                    foil=foil,
+                )
+                # Add filter info to the result
+                prices["language"] = language
+                prices["condition"] = condition
+                prices["foil"] = foil
+                results[unique_key] = prices
             except Exception as err:
-                _LOGGER.warning("Failed to get prices for %s: %s", url, err)
-                results[url] = {"error": str(err)}
+                _LOGGER.warning("Failed to get prices for %s: %s", unique_key, err)
+                results[unique_key] = {"error": str(err)}
         
         return results

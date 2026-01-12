@@ -47,6 +47,15 @@
           "card": "Karte"
         }
       },
+      "card_filters": {
+        "title": "Kartenfilter",
+        "description": "Filter für {card_name} festlegen. Leer lassen für beliebig.",
+        "data": {
+          "language": "Sprache",
+          "condition": "Zustand",
+          "foil": "Foil"
+        }
+      },
       "manage_tracked": {
         "title": "Verfolgte Karten verwalten",
         "description": "Aktuell werden {count} Karten verfolgt. Deselektiere Karten, um sie zu entfernen.",

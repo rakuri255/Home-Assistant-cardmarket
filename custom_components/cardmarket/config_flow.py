@@ -15,6 +15,12 @@ from homeassistant.helpers import config_validation as cv
 
 from .api import CardmarketScraper, CardmarketAuthError, CardmarketConnectionError
 from .const import (
+    CARD_CONDITIONS,
+    CARD_FOIL_OPTIONS,
+    CARD_LANGUAGES,
+    CONF_CARD_CONDITION,
+    CONF_CARD_FOIL,
+    CONF_CARD_LANGUAGE,
     CONF_GAME,
     CONF_PASSWORD,
     CONF_SCAN_INTERVAL,
@@ -133,6 +139,7 @@ class CardmarketOptionsFlowHandler(config_entries.OptionsFlow):
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialize options flow."""
         self._search_results: list[dict[str, Any]] = []
+        self._selected_card: dict[str, Any] | None = None
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -189,28 +196,12 @@ class CardmarketOptionsFlowHandler(config_entries.OptionsFlow):
             selected_url = user_input.get("card")
             
             if selected_url:
-                # Find the card info
+                # Find the card info and store it for the filter step
                 for card in self._search_results:
                     if card.get("url") == selected_url:
-                        # Add to tracked cards
-                        current_tracked = list(
-                            self.config_entry.options.get(CONF_TRACKED_CARDS, [])
-                        )
-                        
-                        # Check if already tracked
-                        if not any(c.get("url") == selected_url for c in current_tracked):
-                            current_tracked.append({
-                                "url": card.get("url"),
-                                "name": card.get("name"),
-                                "set": card.get("set", ""),
-                            })
-                            
-                            return self.async_create_entry(
-                                title="",
-                                data={CONF_TRACKED_CARDS: current_tracked},
-                            )
-                        else:
-                            return self.async_abort(reason="already_tracked")
+                        self._selected_card = card
+                        # Go to filter step instead of adding directly
+                        return await self.async_step_card_filters()
         
         # Build options from search results
         card_options = {
@@ -228,6 +219,63 @@ class CardmarketOptionsFlowHandler(config_entries.OptionsFlow):
             ),
         )
 
+    async def async_step_card_filters(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle card filter selection step."""
+        if self._selected_card is None:
+            return await self.async_step_search_card()
+
+        if user_input is not None:
+            # Get filter values
+            language = user_input.get(CONF_CARD_LANGUAGE, "")
+            condition = user_input.get(CONF_CARD_CONDITION, "")
+            foil = user_input.get(CONF_CARD_FOIL, "")
+
+            # Add to tracked cards with filters
+            current_tracked = list(
+                self.config_entry.options.get(CONF_TRACKED_CARDS, [])
+            )
+
+            # Create unique key for this card+filter combination
+            card_key = self._selected_card.get("url")
+            if language or condition or foil:
+                card_key = f"{card_key}?lang={language}&cond={condition}&foil={foil}"
+
+            # Check if already tracked with same filters
+            if not any(c.get("url") == card_key for c in current_tracked):
+                current_tracked.append({
+                    "url": self._selected_card.get("url"),
+                    "name": self._selected_card.get("name"),
+                    "set": self._selected_card.get("set", ""),
+                    "language": language,
+                    "condition": condition,
+                    "foil": foil,
+                    "unique_key": card_key,
+                })
+
+                self._selected_card = None
+                return self.async_create_entry(
+                    title="",
+                    data={CONF_TRACKED_CARDS: current_tracked},
+                )
+            else:
+                return self.async_abort(reason="already_tracked")
+
+        return self.async_show_form(
+            step_id="card_filters",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(CONF_CARD_LANGUAGE, default=""): vol.In(CARD_LANGUAGES),
+                    vol.Optional(CONF_CARD_CONDITION, default=""): vol.In(CARD_CONDITIONS),
+                    vol.Optional(CONF_CARD_FOIL, default=""): vol.In(CARD_FOIL_OPTIONS),
+                }
+            ),
+            description_placeholders={
+                "card_name": self._selected_card.get("name", "Unknown"),
+            },
+        )
+
     async def async_step_manage_tracked(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
@@ -239,10 +287,10 @@ class CardmarketOptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             cards_to_keep = user_input.get("tracked_cards", [])
             
-            # Filter to only keep selected cards
+            # Filter to only keep selected cards (use unique_key if available)
             new_tracked = [
                 card for card in current_tracked
-                if card.get("url") in cards_to_keep
+                if card.get("unique_key", card.get("url")) in cards_to_keep
             ]
             
             return self.async_create_entry(
@@ -253,12 +301,26 @@ class CardmarketOptionsFlowHandler(config_entries.OptionsFlow):
         if not current_tracked:
             return self.async_abort(reason="no_tracked_cards")
 
-        # Build multi-select options
-        card_options = {
-            card.get("url"): f"{card.get('name')} ({card.get('set', 'Unknown')})"
-            for card in current_tracked
-            if card.get("url")
-        }
+        # Build multi-select options with filter info
+        card_options = {}
+        for card in current_tracked:
+            if not card.get("url"):
+                continue
+            key = card.get("unique_key", card.get("url"))
+            name = card.get("name", "Unknown")
+            card_set = card.get("set", "Unknown")
+            
+            # Build filter suffix
+            filters = []
+            if lang := card.get("language"):
+                filters.append(CARD_LANGUAGES.get(lang, lang))
+            if cond := card.get("condition"):
+                filters.append(CARD_CONDITIONS.get(cond, cond))
+            if foil := card.get("foil"):
+                filters.append(CARD_FOIL_OPTIONS.get(foil, foil))
+            
+            filter_str = f" [{', '.join(filters)}]" if filters else ""
+            card_options[key] = f"{name} ({card_set}){filter_str}"
         
         # Default to all currently tracked
         default_selected = list(card_options.keys())

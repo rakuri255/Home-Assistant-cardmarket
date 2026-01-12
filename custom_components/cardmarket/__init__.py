@@ -35,15 +35,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         game=entry.data.get(CONF_GAME, DEFAULT_GAME),
     )
 
-    # Get tracked cards from options
+    # Get tracked cards from options (full card data including filters)
     tracked_cards = entry.options.get(CONF_TRACKED_CARDS, [])
-    tracked_urls = [card.get("url") for card in tracked_cards if card.get("url")]
 
     # Get scan interval from config (stored in minutes, convert to seconds)
     scan_interval = entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL // 60) * 60
 
     coordinator = CardmarketDataUpdateCoordinator(
-        hass, scraper, tracked_card_urls=tracked_urls, scan_interval=scan_interval
+        hass, scraper, tracked_cards=tracked_cards, scan_interval=scan_interval
     )
     await coordinator.async_config_entry_first_refresh()
 

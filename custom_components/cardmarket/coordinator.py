@@ -22,7 +22,7 @@ class CardmarketDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self,
         hass: HomeAssistant,
         scraper: CardmarketScraper,
-        tracked_card_urls: list[str] | None = None,
+        tracked_cards: list[dict[str, Any]] | None = None,
         scan_interval: int = DEFAULT_SCAN_INTERVAL,
     ) -> None:
         """Initialize the coordinator."""
@@ -33,11 +33,11 @@ class CardmarketDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             update_interval=timedelta(seconds=scan_interval),
         )
         self.scraper = scraper
-        self.tracked_card_urls = tracked_card_urls or []
+        self.tracked_cards = tracked_cards or []
 
-    def update_tracked_cards(self, urls: list[str]) -> None:
-        """Update the list of tracked card URLs."""
-        self.tracked_card_urls = urls
+    def update_tracked_cards(self, cards: list[dict[str, Any]]) -> None:
+        """Update the list of tracked cards."""
+        self.tracked_cards = cards
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from Cardmarket website."""
@@ -46,9 +46,9 @@ class CardmarketDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             data = await self.scraper.get_all_data()
             
             # Get tracked card prices if any cards are being tracked
-            if self.tracked_card_urls:
+            if self.tracked_cards:
                 tracked_cards = await self.scraper.get_tracked_card_prices(
-                    self.tracked_card_urls
+                    self.tracked_cards
                 )
                 data["tracked_cards"] = tracked_cards
             else:

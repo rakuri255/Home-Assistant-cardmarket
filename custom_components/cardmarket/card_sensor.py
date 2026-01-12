@@ -21,11 +21,17 @@ from .const import (
     ATTR_CARD_NAME,
     ATTR_CARD_SET,
     ATTR_CARD_URL,
+    ATTR_CONDITION,
+    ATTR_FOIL,
+    ATTR_LANGUAGE,
     ATTR_PRICE_1_DAY,
     ATTR_PRICE_7_DAY,
     ATTR_PRICE_30_DAY,
     ATTR_PRICE_FROM,
     ATTR_PRICE_TREND,
+    CARD_CONDITIONS,
+    CARD_FOIL_OPTIONS,
+    CARD_LANGUAGES,
     CONF_TRACKED_CARDS,
     DOMAIN,
 )
@@ -49,6 +55,10 @@ class CardmarketCardPriceSensor(CoordinatorEntity, SensorEntity):
         card_name: str,
         card_set: str,
         entry: ConfigEntry,
+        language: str = "",
+        condition: str = "",
+        foil: str = "",
+        unique_key: str = "",
     ) -> None:
         """Initialize the card price sensor."""
         super().__init__(coordinator)
@@ -57,13 +67,33 @@ class CardmarketCardPriceSensor(CoordinatorEntity, SensorEntity):
         self._card_name = card_name
         self._card_set = card_set
         self._entry = entry
+        self._language = language
+        self._condition = condition
+        self._foil = foil
+        self._unique_key = unique_key or card_url
         
-        # Create a unique ID based on the card URL
-        safe_id = card_url.replace("/", "_").replace(":", "").replace(".", "_")
+        # Create a unique ID based on the unique key
+        safe_id = self._unique_key.replace("/", "_").replace(":", "").replace(".", "_").replace("?", "_").replace("&", "_").replace("=", "_")
         self._attr_unique_id = f"{entry.entry_id}_card_{safe_id}"
         
-        # Set the entity name
-        self._attr_name = f"{card_name} ({card_set})" if card_set else card_name
+        # Build the entity name with filter info
+        name_parts = [card_name]
+        if card_set:
+            name_parts[0] = f"{card_name} ({card_set})"
+        
+        filters = []
+        if language:
+            filters.append(CARD_LANGUAGES.get(language, language))
+        if condition:
+            filters.append(CARD_CONDITIONS.get(condition, condition))
+        if foil:
+            filters.append(CARD_FOIL_OPTIONS.get(foil, foil))
+        
+        if filters:
+            self._attr_name = f"{name_parts[0]} [{', '.join(filters)}]"
+        else:
+            self._attr_name = name_parts[0]
+        
         self._attr_icon = "mdi:cards"
 
     @property
@@ -84,7 +114,8 @@ class CardmarketCardPriceSensor(CoordinatorEntity, SensorEntity):
             return None
         
         tracked_cards = self.coordinator.data.get("tracked_cards", {})
-        card_data = tracked_cards.get(self._card_url, {})
+        # Use unique_key to look up the card data
+        card_data = tracked_cards.get(self._unique_key, {})
         
         return card_data.get("price_from")
 
@@ -95,13 +126,21 @@ class CardmarketCardPriceSensor(CoordinatorEntity, SensorEntity):
             return {}
         
         tracked_cards = self.coordinator.data.get("tracked_cards", {})
-        card_data = tracked_cards.get(self._card_url, {})
+        card_data = tracked_cards.get(self._unique_key, {})
         
         attrs = {
             ATTR_CARD_NAME: self._card_name,
             ATTR_CARD_SET: self._card_set,
             ATTR_CARD_URL: self._card_url,
         }
+        
+        # Add filter info
+        if self._language:
+            attrs[ATTR_LANGUAGE] = CARD_LANGUAGES.get(self._language, self._language)
+        if self._condition:
+            attrs[ATTR_CONDITION] = CARD_CONDITIONS.get(self._condition, self._condition)
+        if self._foil:
+            attrs[ATTR_FOIL] = CARD_FOIL_OPTIONS.get(self._foil, self._foil)
         
         if price_from := card_data.get("price_from"):
             attrs[ATTR_PRICE_FROM] = price_from
@@ -116,6 +155,10 @@ class CardmarketCardPriceSensor(CoordinatorEntity, SensorEntity):
         if available := card_data.get("available_items"):
             attrs[ATTR_AVAILABLE_ITEMS] = available
         
+        # Add filter URL if available
+        if filter_url := card_data.get("filter_url"):
+            attrs["filter_url"] = filter_url
+        
         return attrs
 
     @property
@@ -125,7 +168,7 @@ class CardmarketCardPriceSensor(CoordinatorEntity, SensorEntity):
             return False
         
         tracked_cards = self.coordinator.data.get("tracked_cards", {})
-        card_data = tracked_cards.get(self._card_url, {})
+        card_data = tracked_cards.get(self._unique_key, {})
         
         return "error" not in card_data
 
@@ -148,6 +191,10 @@ async def async_setup_tracked_card_sensors(
         card_url = card.get("url", "")
         card_name = card.get("name", "Unknown Card")
         card_set = card.get("set", "")
+        language = card.get("language", "")
+        condition = card.get("condition", "")
+        foil = card.get("foil", "")
+        unique_key = card.get("unique_key", card_url)
         
         if card_url:
             entities.append(
@@ -157,6 +204,10 @@ async def async_setup_tracked_card_sensors(
                     card_name=card_name,
                     card_set=card_set,
                     entry=entry,
+                    language=language,
+                    condition=condition,
+                    foil=foil,
+                    unique_key=unique_key,
                 )
             )
     

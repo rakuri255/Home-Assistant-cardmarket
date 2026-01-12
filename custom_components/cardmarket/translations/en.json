@@ -47,6 +47,15 @@
           "card": "Card"
         }
       },
+      "card_filters": {
+        "title": "Card Filters",
+        "description": "Set filters for {card_name}. Leave empty for any.",
+        "data": {
+          "language": "Language",
+          "condition": "Condition",
+          "foil": "Foil"
+        }
+      },
       "manage_tracked": {
         "title": "Manage Tracked Cards",
         "description": "Currently tracking {count} cards. Unselect cards to remove them from tracking.",
