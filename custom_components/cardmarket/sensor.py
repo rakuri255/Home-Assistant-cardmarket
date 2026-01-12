@@ -71,7 +71,6 @@ SENSOR_DESCRIPTIONS: tuple[CardmarketSensorEntityDescription, ...] = (
     CardmarketSensorEntityDescription(
         key="account_balance",
         translation_key="account_balance",
-        name="Account Balance",
         native_unit_of_measurement="€",
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
@@ -81,7 +80,6 @@ SENSOR_DESCRIPTIONS: tuple[CardmarketSensorEntityDescription, ...] = (
     CardmarketSensorEntityDescription(
         key="stock_count",
         translation_key="stock_count",
-        name="Stock Articles",
         native_unit_of_measurement="articles",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:cards",
@@ -91,7 +89,6 @@ SENSOR_DESCRIPTIONS: tuple[CardmarketSensorEntityDescription, ...] = (
     CardmarketSensorEntityDescription(
         key="stock_value",
         translation_key="stock_value",
-        name="Stock Value",
         native_unit_of_measurement="€",
         device_class=SensorDeviceClass.MONETARY,
         state_class=SensorStateClass.TOTAL,
@@ -101,7 +98,6 @@ SENSOR_DESCRIPTIONS: tuple[CardmarketSensorEntityDescription, ...] = (
     CardmarketSensorEntityDescription(
         key="seller_orders_paid",
         translation_key="seller_orders_paid",
-        name="Seller Orders (Paid)",
         native_unit_of_measurement="orders",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:package-variant",
@@ -111,7 +107,6 @@ SENSOR_DESCRIPTIONS: tuple[CardmarketSensorEntityDescription, ...] = (
     CardmarketSensorEntityDescription(
         key="seller_orders_sent",
         translation_key="seller_orders_sent",
-        name="Seller Orders (Sent)",
         native_unit_of_measurement="orders",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:package-variant-closed",
@@ -121,7 +116,6 @@ SENSOR_DESCRIPTIONS: tuple[CardmarketSensorEntityDescription, ...] = (
     CardmarketSensorEntityDescription(
         key="seller_orders_arrived",
         translation_key="seller_orders_arrived",
-        name="Seller Orders (Arrived)",
         native_unit_of_measurement="orders",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:package-check",
@@ -131,7 +125,6 @@ SENSOR_DESCRIPTIONS: tuple[CardmarketSensorEntityDescription, ...] = (
     CardmarketSensorEntityDescription(
         key="buyer_orders_paid",
         translation_key="buyer_orders_paid",
-        name="Buyer Orders (Paid)",
         native_unit_of_measurement="orders",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:cart",
@@ -141,7 +134,6 @@ SENSOR_DESCRIPTIONS: tuple[CardmarketSensorEntityDescription, ...] = (
     CardmarketSensorEntityDescription(
         key="buyer_orders_sent",
         translation_key="buyer_orders_sent",
-        name="Buyer Orders (Sent)",
         native_unit_of_measurement="orders",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:truck-delivery",
@@ -151,7 +143,6 @@ SENSOR_DESCRIPTIONS: tuple[CardmarketSensorEntityDescription, ...] = (
     CardmarketSensorEntityDescription(
         key="buyer_orders_arrived",
         translation_key="buyer_orders_arrived",
-        name="Buyer Orders (Arrived)",
         native_unit_of_measurement="orders",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:package-check",
@@ -161,7 +152,6 @@ SENSOR_DESCRIPTIONS: tuple[CardmarketSensorEntityDescription, ...] = (
     CardmarketSensorEntityDescription(
         key="unread_messages",
         translation_key="unread_messages",
-        name="Unread Messages",
         native_unit_of_measurement="messages",
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:message-badge",
