@@ -7,6 +7,7 @@ CONF_USERNAME = "username"
 CONF_PASSWORD = "password"
 CONF_GAME = "game"
 CONF_TRACKED_CARDS = "tracked_cards"
+CONF_SCAN_INTERVAL = "scan_interval"
 
 # Supported games on Cardmarket
 SUPPORTED_GAMES = {
@@ -40,7 +41,9 @@ MESSAGES_URL_TEMPLATE = "https://www.cardmarket.com/en/{game}/Account/Messages"
 GAME_URL_TEMPLATE = "https://www.cardmarket.com/en/{game}"
 
 # Update intervals (in seconds)
-DEFAULT_SCAN_INTERVAL = 300  # 5 minutes
+DEFAULT_SCAN_INTERVAL = 3600  # 60 minutes
+MIN_SCAN_INTERVAL = 300  # 5 minutes minimum
+MAX_SCAN_INTERVAL = 86400  # 24 hours maximum
 
 # Sensor types
 SENSOR_ACCOUNT_BALANCE = "account_balance"

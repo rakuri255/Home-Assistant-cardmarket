@@ -7,7 +7,11 @@
         "data": {
           "username": "Username",
           "password": "Password",
-          "game": "Game"
+          "game": "Game",
+          "scan_interval": "Update interval (minutes)"
+        },
+        "data_description": {
+          "scan_interval": "How often to fetch data from Cardmarket (5-1440 minutes, default: 60)"
         }
       }
     },

@@ -16,10 +16,14 @@ from .api import CardmarketScraper, CardmarketAuthError, CardmarketConnectionErr
 from .const import (
     CONF_GAME,
     CONF_PASSWORD,
+    CONF_SCAN_INTERVAL,
     CONF_TRACKED_CARDS,
     CONF_USERNAME,
     DEFAULT_GAME,
+    DEFAULT_SCAN_INTERVAL,
     DOMAIN,
+    MAX_SCAN_INTERVAL,
+    MIN_SCAN_INTERVAL,
     SUPPORTED_GAMES,
 )
 
@@ -30,6 +34,10 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
         vol.Required(CONF_USERNAME): str,
         vol.Required(CONF_PASSWORD): str,
         vol.Required(CONF_GAME, default=DEFAULT_GAME): vol.In(SUPPORTED_GAMES),
+        vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL // 60): vol.All(
+            vol.Coerce(int),
+            vol.Range(min=MIN_SCAN_INTERVAL // 60, max=MAX_SCAN_INTERVAL // 60)
+        ),
     }
 )
 

@@ -2,17 +2,32 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
-A Home Assistant integration for the Cardmarket API. This integration allows you to monitor your Cardmarket account data, orders, and stock directly in Home Assistant.
+A Home Assistant integration for Cardmarket. Monitor your Cardmarket account, orders, and card prices directly in Home Assistant.
 
 ## Features
 
-- **Account Balance**: Shows your current account balance
-- **Unpaid Amount**: Shows outstanding amounts
-- **Stock Articles**: Number of articles in your stock
-- **Stock Value**: Total value of your stock
-- **Seller Orders**: Number of paid and sent orders as a seller
-- **Buyer Orders**: Number of paid and sent orders as a buyer
+- **Account Balance**: Current account balance
+- **Seller Orders**: Number of sent and arrived orders as seller
+- **Buyer Orders**: Number of sent and arrived orders as buyer
 - **Unread Messages**: Number of unread messages
+- **Card Tracking**: Monitor prices of individual cards
+- **Multi-Game Support**: Supports all Cardmarket games
+
+## Supported Games
+
+- Magic: The Gathering
+- Pokémon
+- Yu-Gi-Oh!
+- One Piece
+- Lorcana
+- Flesh and Blood
+- Star Wars Unlimited
+- Digimon
+- Dragon Ball Super
+- Vanguard
+- Weiß Schwarz
+- Final Fantasy
+- Force of Will
 
 ## Installation
 
@@ -34,56 +49,55 @@ A Home Assistant integration for the Cardmarket API. This integration allows you
 
 ## Configuration
 
-### Getting API Access
-
-1. Log in to [Cardmarket](https://www.cardmarket.com)
-2. Go to your profile
-3. Create a new "Dedicated App" under the API settings
-4. Note down the following values:
-   - App Token
-   - App Secret
-   - Access Token
-   - Access Token Secret
-
-**Note**: The Cardmarket API is only available for professional sellers and is subject to a manual approval process.
-
 ### Adding the Integration
 
 1. Go to **Settings** → **Devices & Services**
 2. Click **Add Integration**
 3. Search for "Cardmarket"
-4. Enter your API credentials:
-   - App Token
-   - App Secret
-   - Access Token
-   - Access Token Secret
+4. Enter your login credentials:
+   - Username
+   - Password
+   - Game (e.g. Magic, Pokémon, Yu-Gi-Oh!)
 5. Click "Submit"
+
+**Note**: You can set up multiple instances for different games.
 
 ## Sensors
 
 | Sensor | Description |
 |--------|-------------|
 | `sensor.cardmarket_account_balance` | Account balance in Euro |
-| `sensor.cardmarket_unpaid_amount` | Unpaid amount |
-| `sensor.cardmarket_provider_amount` | Provider recharge amount |
-| `sensor.cardmarket_stock_count` | Number of stock articles |
-| `sensor.cardmarket_stock_value` | Total stock value |
-| `sensor.cardmarket_seller_orders_paid` | Paid seller orders |
 | `sensor.cardmarket_seller_orders_sent` | Sent seller orders |
-| `sensor.cardmarket_buyer_orders_paid` | Paid buyer orders |
+| `sensor.cardmarket_seller_orders_arrived` | Arrived seller orders |
 | `sensor.cardmarket_buyer_orders_sent` | Sent buyer orders |
+| `sensor.cardmarket_buyer_orders_arrived` | Arrived buyer orders |
 | `sensor.cardmarket_unread_messages` | Unread messages |
+
+## Card Tracking
+
+You can track individual cards and monitor their prices.
+
+### Services
+
+#### `cardmarket.search_card`
+Search for a card and return results.
+
+```yaml
+service: cardmarket.search_card
+data:
+  query: "Lightning Bolt"
+```
 
 ## Automations
 
-### Example: Notification for New Paid Order
+### Example: Notification for New Order
 
 ```yaml
 automation:
-  - alias: "Cardmarket - New Paid Order"
+  - alias: "Cardmarket - New Order"
     trigger:
       - platform: state
-        entity_id: sensor.cardmarket_seller_orders_paid
+        entity_id: sensor.cardmarket_seller_orders_sent
     condition:
       - condition: template
         value_template: "{{ trigger.to_state.state | int > trigger.from_state.state | int }}"
@@ -91,49 +105,52 @@ automation:
       - service: notify.mobile_app
         data:
           title: "Cardmarket"
-          message: "You have a new paid order!"
+          message: "You have a new order!"
 ```
 
-### Example: Notification for Unread Message
+### Example: Price Alert
 
 ```yaml
 automation:
-  - alias: "Cardmarket - Unread Message"
+  - alias: "Cardmarket - Price Alert"
     trigger:
       - platform: numeric_state
-        entity_id: sensor.cardmarket_unread_messages
-        above: 0
+        entity_id: sensor.cardmarket_card_lightning_bolt
+        below: 0.10
     action:
       - service: notify.mobile_app
         data:
-          title: "Cardmarket"
-          message: "You have {{ states('sensor.cardmarket_unread_messages') }} unread message(s)!"
+          title: "Cardmarket Price Alert"
+          message: "Lightning Bolt is below 0.10€!"
 ```
 
 ## Update Interval
 
-The integration updates data every 5 minutes. This is a good balance between freshness and API usage.
+The integration updates data every 60 minutes by default to avoid overloading the Cardmarket website. You can configure the update interval during setup:
+
+- **Minimum**: 5 minutes
+- **Maximum**: 24 hours (1440 minutes)
+- **Default**: 60 minutes
+
+A higher interval is recommended to be respectful of Cardmarket's servers.
+
+## Options
+
+After setup, you can configure additional settings under **Options**:
+- Add cards for price monitoring
 
 ## Troubleshooting
 
-### "Invalid authentication credentials"
+### "Invalid credentials"
 
-- Check that all four API tokens are entered correctly
-- Make sure your API app is still active
-- Verify that your API access has not been revoked
+- Check your username and password
+- Make sure your account is not locked
 
-### "Failed to connect to Cardmarket API"
+### "Connection failed"
 
 - Check your internet connection
 - Cardmarket servers may be temporarily unavailable
 - Try again later
-
-## API Usage Notes
-
-According to Cardmarket documentation:
-- Dedicated Apps are only intended to support normal Cardmarket activities
-- Excessive use of Marketplace resources (products, articles, prices) may lead to blocking
-- This integration focuses on account management and order tracking
 
 ## License
 
