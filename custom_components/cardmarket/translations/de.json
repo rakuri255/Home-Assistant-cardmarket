@@ -1,0 +1,97 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Cardmarket Anmeldung",
+        "description": "Geben Sie Ihre Cardmarket Anmeldedaten ein und wählen Sie Ihr Spiel.",
+        "data": {
+          "username": "Benutzername",
+          "password": "Passwort",
+          "game": "Spiel"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung zu Cardmarket fehlgeschlagen",
+      "invalid_auth": "Ungültiger Benutzername oder Passwort",
+      "unknown": "Unerwarteter Fehler aufgetreten"
+    },
+    "abort": {
+      "already_configured": "Dieses Cardmarket-Konto ist bereits konfiguriert"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Cardmarket Optionen",
+        "menu_options": {
+          "search_card": "Karte suchen und hinzufügen",
+          "manage_tracked": "Verfolgte Karten verwalten"
+        }
+      },
+      "search_card": {
+        "title": "Karte suchen",
+        "description": "Suche nach einer Karte, um sie zur Preisverfolgung hinzuzufügen.",
+        "data": {
+          "search_term": "Kartenname"
+        }
+      },
+      "select_card": {
+        "title": "Karte auswählen",
+        "description": "Wähle eine Karte aus den Suchergebnissen zur Verfolgung.",
+        "data": {
+          "card": "Karte"
+        }
+      },
+      "manage_tracked": {
+        "title": "Verfolgte Karten verwalten",
+        "description": "Aktuell werden {count} Karten verfolgt. Deselektiere Karten, um sie zu entfernen.",
+        "data": {
+          "tracked_cards": "Verfolgte Karten"
+        }
+      }
+    },
+    "error": {
+      "no_results": "Keine Karten für diese Suche gefunden",
+      "search_failed": "Suche fehlgeschlagen, bitte erneut versuchen"
+    },
+    "abort": {
+      "already_tracked": "Diese Karte wird bereits verfolgt",
+      "no_tracked_cards": "Es werden derzeit keine Karten verfolgt"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "account_balance": {
+        "name": "Kontostand"
+      },
+      "stock_count": {
+        "name": "Lagerartikel"
+      },
+      "stock_value": {
+        "name": "Lagerwert"
+      },
+      "seller_orders_paid": {
+        "name": "Verkäufer-Bestellungen (Bezahlt)"
+      },
+      "seller_orders_sent": {
+        "name": "Verkäufer-Bestellungen (Versendet)"
+      },
+      "seller_orders_arrived": {
+        "name": "Verkäufer-Bestellungen (Angekommen)"
+      },
+      "buyer_orders_paid": {
+        "name": "Käufer-Bestellungen (Bezahlt)"
+      },
+      "buyer_orders_sent": {
+        "name": "Käufer-Bestellungen (Versendet)"
+      },
+      "buyer_orders_arrived": {
+        "name": "Käufer-Bestellungen (Angekommen)"
+      },
+      "unread_messages": {
+        "name": "Ungelesene Nachrichten"
+      }
+    }
+  }
+}

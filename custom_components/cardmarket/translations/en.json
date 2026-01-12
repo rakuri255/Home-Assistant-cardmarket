@@ -1,0 +1,97 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Cardmarket Login",
+        "description": "Enter your Cardmarket login credentials and select your game.",
+        "data": {
+          "username": "Username",
+          "password": "Password",
+          "game": "Game"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to Cardmarket",
+      "invalid_auth": "Invalid username or password",
+      "unknown": "Unexpected error occurred"
+    },
+    "abort": {
+      "already_configured": "This Cardmarket account is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Cardmarket Options",
+        "menu_options": {
+          "search_card": "Search and add a card to track",
+          "manage_tracked": "Manage tracked cards"
+        }
+      },
+      "search_card": {
+        "title": "Search Card",
+        "description": "Search for a card to add to price tracking.",
+        "data": {
+          "search_term": "Card name"
+        }
+      },
+      "select_card": {
+        "title": "Select Card",
+        "description": "Select a card from the search results to track.",
+        "data": {
+          "card": "Card"
+        }
+      },
+      "manage_tracked": {
+        "title": "Manage Tracked Cards",
+        "description": "Currently tracking {count} cards. Unselect cards to remove them from tracking.",
+        "data": {
+          "tracked_cards": "Tracked cards"
+        }
+      }
+    },
+    "error": {
+      "no_results": "No cards found for this search",
+      "search_failed": "Search failed, please try again"
+    },
+    "abort": {
+      "already_tracked": "This card is already being tracked",
+      "no_tracked_cards": "No cards are currently being tracked"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "account_balance": {
+        "name": "Account Balance"
+      },
+      "stock_count": {
+        "name": "Stock Articles"
+      },
+      "stock_value": {
+        "name": "Stock Value"
+      },
+      "seller_orders_paid": {
+        "name": "Seller Orders (Paid)"
+      },
+      "seller_orders_sent": {
+        "name": "Seller Orders (Sent)"
+      },
+      "seller_orders_arrived": {
+        "name": "Seller Orders (Arrived)"
+      },
+      "buyer_orders_paid": {
+        "name": "Buyer Orders (Paid)"
+      },
+      "buyer_orders_sent": {
+        "name": "Buyer Orders (Sent)"
+      },
+      "buyer_orders_arrived": {
+        "name": "Buyer Orders (Arrived)"
+      },
+      "unread_messages": {
+        "name": "Unread Messages"
+      }
+    }
+  }
+}

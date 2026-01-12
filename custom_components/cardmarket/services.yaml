@@ -1,0 +1,59 @@
+search_card:
+  name: Search Card
+  description: Search for cards on Cardmarket by name.
+  fields:
+    search_term:
+      name: Search Term
+      description: The card name or keywords to search for.
+      required: true
+      example: "Black Lotus"
+      selector:
+        text:
+    max_results:
+      name: Max Results
+      description: Maximum number of results to return (1-50).
+      required: false
+      default: 10
+      example: 10
+      selector:
+        number:
+          min: 1
+          max: 50
+
+add_tracked_card:
+  name: Add Tracked Card
+  description: Add a card to price tracking. Creates a sensor entity for the card.
+  fields:
+    card_url:
+      name: Card URL
+      description: The Cardmarket URL of the card to track.
+      required: true
+      example: "https://www.cardmarket.com/en/Magic/Products/Singles/Alpha/Black-Lotus"
+      selector:
+        text:
+    card_name:
+      name: Card Name
+      description: The name of the card.
+      required: true
+      example: "Black Lotus"
+      selector:
+        text:
+    card_set:
+      name: Card Set
+      description: The set/expansion the card is from.
+      required: false
+      example: "Alpha"
+      selector:
+        text:
+
+remove_tracked_card:
+  name: Remove Tracked Card
+  description: Remove a card from price tracking.
+  fields:
+    card_url:
+      name: Card URL
+      description: The Cardmarket URL of the card to stop tracking.
+      required: true
+      example: "https://www.cardmarket.com/en/Magic/Products/Singles/Alpha/Black-Lotus"
+      selector:
+        text:
