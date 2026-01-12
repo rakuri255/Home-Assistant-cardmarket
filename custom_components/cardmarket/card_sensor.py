@@ -70,9 +70,11 @@ class CardmarketCardPriceSensor(CoordinatorEntity, SensorEntity):
     def device_info(self) -> DeviceInfo:
         """Return device info."""
         return DeviceInfo(
-            identifiers={(DOMAIN, self._entry.entry_id)},
-            name="Cardmarket",
+            identifiers={(DOMAIN, f"{self._entry.entry_id}_cards")},
+            name="Cardmarket Card Tracking",
             manufacturer="Cardmarket",
+            model="Price Tracker",
+            via_device=(DOMAIN, self._entry.entry_id),
         )
 
     @property
