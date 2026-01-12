@@ -75,9 +75,34 @@ A Home Assistant integration for Cardmarket. Monitor your Cardmarket account, or
 
 ## Card Tracking
 
-You can track individual cards and monitor their prices.
+You can track individual cards and monitor their prices. Each tracked card creates a sensor showing the current lowest price with additional attributes like price trend and availability.
 
-### Services
+### Adding Cards via UI (Recommended)
+
+1. Go to **Settings** → **Devices & Services**
+2. Find **Cardmarket** and click **Configure**
+3. Select **"Search and add a card to track"**
+4. Enter the card name (e.g. "Lightning Bolt")
+5. Select the desired card from the search results
+6. The card will be added automatically and a new sensor is created
+
+You can add **multiple cards** by repeating this process. To remove cards, select **"Manage tracked cards"** in the configuration menu.
+
+### Card Sensors
+
+For each tracked card, a sensor is created (e.g. `sensor.cardmarket_card_lightning_bolt`) with the following attributes:
+
+| Attribute | Description |
+|-----------|-------------|
+| `price_from` | Lowest available price |
+| `price_trend` | Price trend |
+| `price_30_day_avg` | 30-day average price |
+| `price_7_day_avg` | 7-day average price |
+| `price_1_day_avg` | 1-day average price |
+| `available_items` | Number of available offers |
+| `card_url` | Link to the card on Cardmarket |
+
+### Services (Alternative)
 
 #### `cardmarket.search_card`
 Search for a card and return results.
